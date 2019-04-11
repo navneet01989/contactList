@@ -1,8 +1,10 @@
 package com.e.app.contact_list
 
-class ContactListPresenter(view: View) {
-    fun fetchContacts() {
+import com.e.app.models.RetroCrypto
 
+class ContactListPresenter(val view: View) {
+    fun fetchContacts() {
+        view.fetchContacts()
     }
     interface View {
         fun fetchContacts()
