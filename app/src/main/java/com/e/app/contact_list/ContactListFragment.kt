@@ -11,10 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.e.app.R
 import com.e.app.adapters.ContactListAdapter
 import com.e.app.api.ApiWorker
-import com.e.app.models.RetroCrypto
 import com.e.app.api.GetData
 import com.e.app.api.GetData.Companion.BASE_URL
-import com.e.app.models.User
+import com.e.app.models.Model
 import kotlinx.android.synthetic.main.contact_list_fragment.view.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -22,9 +21,9 @@ import retrofit2.Response
 import retrofit2.Retrofit
 
 class ContactListFragment: Fragment(), ContactListPresenter.View {
-    private lateinit var progressDialog: ProgressDialog;
+    private lateinit var progressDialog: ProgressDialog
     private lateinit var contactListPresenter: ContactListPresenter
-    private var myRetroCryptoArrayList: List<User>? = null
+    private var myRetroCryptoArrayList: List<Model.User>? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.contact_list_fragment, container, false)
@@ -35,18 +34,18 @@ class ContactListFragment: Fragment(), ContactListPresenter.View {
     }
     override fun fetchContacts() {
         try {
-            progressDialog = ProgressDialog.show(context, "wait", "requesting");
+            progressDialog = ProgressDialog.show(context, "wait", "requesting")
             val requestInterface = Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(ApiWorker.gsonConverter)
                 .client(ApiWorker.client)
                 .build().create(GetData::class.java)
-            requestInterface.getContacts("1").enqueue(object : Callback<RetroCrypto> {
-                override fun onFailure(call: Call<RetroCrypto>, t: Throwable) {
+            requestInterface.getContacts("1").enqueue(object : Callback<Model.RetroCrypto> {
+                override fun onFailure(call: Call<Model.RetroCrypto>, t: Throwable) {
                     handleError(t)
                 }
 
-                override fun onResponse(call: Call<RetroCrypto>, response: Response<RetroCrypto>) {
+                override fun onResponse(call: Call<Model.RetroCrypto>, response: Response<Model.RetroCrypto>) {
                     handleResponse(response.body())
                 }
 
@@ -56,7 +55,7 @@ class ContactListFragment: Fragment(), ContactListPresenter.View {
             ex.printStackTrace()
         }
     }
-    private fun handleResponse(cryptoList: RetroCrypto?) {
+    private fun handleResponse(cryptoList: Model.RetroCrypto?) {
         myRetroCryptoArrayList = cryptoList?.data
         val myAdapter = ContactListAdapter(myRetroCryptoArrayList!!)
         view?.rcyContactList?.adapter = myAdapter

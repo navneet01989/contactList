@@ -5,10 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.e.app.R
-import com.e.app.models.User
+import com.e.app.models.Model
+
 import kotlinx.android.synthetic.main.contact_list_item.view.*
 
-class ContactListAdapter(val myRetroCryptoArrayList: List<User>) : RecyclerView.Adapter<ContactListAdapter.ViewHolder>() {
+class ContactListAdapter(val myRetroCryptoArrayList: List<Model.User>) : RecyclerView.Adapter<ContactListAdapter.ViewHolder>() {
 
     override fun getItemCount() = myRetroCryptoArrayList.size
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -20,9 +21,9 @@ class ContactListAdapter(val myRetroCryptoArrayList: List<User>) : RecyclerView.
         return ViewHolder(view)
     }
 
-    class ViewHolder(val view : View) : RecyclerView.ViewHolder(view) {
-        fun bind(user: User) {
-            view.txtContactName.text = user.first_name + user.last_name
+    class ViewHolder(private val view : View) : RecyclerView.ViewHolder(view) {
+        fun bind(user: Model.User) {
+            view.txtContactName.text = String.format("%s %s", user.first_name, user.last_name)
         }
     }
 }
