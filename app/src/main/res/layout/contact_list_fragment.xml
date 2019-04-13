@@ -36,4 +36,10 @@
             android:id="@+id/rcyContactList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
+        <TextView android:id="@+id/emptyView" android:layout_width="match_parent" android:layout_height="match_parent"
+                  android:visibility="gone"
+                  android:text="@string/no_data_found_tap_to_reload"
+                  android:gravity="center"
+                  android:textAppearance="@android:style/TextAppearance.Large"
+                  android:textColor="@android:color/black"/>
 </LinearLayout>
