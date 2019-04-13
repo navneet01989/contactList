@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.e.app.R
 import com.e.app.adapters.ContactListAdapter
 import com.e.app.api.GetData
 import com.e.app.api.GetData.Companion.BASE_URL
@@ -18,11 +17,20 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import androidx.recyclerview.widget.DividerItemDecoration
+import com.e.app.R
+
 
 class ContactListFragment: Fragment(), ContactListPresenter.View {
 
     private lateinit var contactListPresenter: ContactListPresenter
-    private lateinit var myRetroCryptoArrayList: List<Model.User>
+    private lateinit var myRetroCryptoArrayList: MutableList<Model.User>
+    private lateinit var layoutManager: LinearLayoutManager
+    private var isLoading = false
+    private val PAGE_SIZE = 10
+    private var isLastPage = false
+    private var currentPage = 1
+    private lateinit var myAdapter: ContactListAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         inflater.inflate(R.layout.contact_list_fragment, container, false)!!
@@ -33,12 +41,13 @@ class ContactListFragment: Fragment(), ContactListPresenter.View {
         contactListPresenter.fetchContacts()
     }
     override fun fetchContacts() {
+        isLoading = true
         progress_horizontal.visibility = View.VISIBLE
         val requestInterface = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build().create(GetData::class.java)
-        requestInterface.getContacts("1").enqueue(object : Callback<Model.ContactResponse> {
+        requestInterface.getContacts(currentPage, PAGE_SIZE).enqueue(object : Callback<Model.ContactResponse> {
             override fun onFailure(call: Call<Model.ContactResponse>, t: Throwable) {
                 contactListPresenter.handleError(t)
             }
@@ -47,15 +56,54 @@ class ContactListFragment: Fragment(), ContactListPresenter.View {
             }
         })
     }
+
+    private val recyclerViewOnScrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+            val visibleItemCount = layoutManager.childCount
+            val totalItemCount = layoutManager.itemCount
+            val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+            if(!isLoading && !isLastPage) {
+                if((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                    && firstVisibleItemPosition >= 0
+                    && totalItemCount >= PAGE_SIZE) {
+                    currentPage++
+                    contactListPresenter.fetchContacts()
+                }
+            }
+        }
+    }
     override fun handleResponse(contactResponse: Model.ContactResponse?) {
-        myRetroCryptoArrayList = contactResponse?.data!!
-        val myAdapter = ContactListAdapter(myRetroCryptoArrayList)
-        rcyContactList.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-        rcyContactList.adapter = myAdapter
+        if(currentPage == 1) {
+            if(contactResponse?.data!!.size == 0) {
+                isLastPage = true
+            } else {
+                layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+                val dividerItemDecoration = DividerItemDecoration(
+                    context,
+                    RecyclerView.VERTICAL
+                )
+                rcyContactList.layoutManager = layoutManager
+                rcyContactList.addItemDecoration(dividerItemDecoration)
+                myRetroCryptoArrayList = contactResponse.data
+                myAdapter = ContactListAdapter(myRetroCryptoArrayList)
+                rcyContactList.adapter = myAdapter
+                rcyContactList.addOnScrollListener(recyclerViewOnScrollListener)
+            }
+        } else {
+            if(contactResponse?.data!!.size == 0) {
+                isLastPage = true
+            } else {
+                myRetroCryptoArrayList.addAll(contactResponse.data)
+                myAdapter.notifyDataSetChanged()
+            }
+        }
         progress_horizontal.visibility = View.GONE
+        isLoading = false
     }
     override fun handleError(error: Throwable) {
         error.printStackTrace()
         progress_horizontal.visibility = View.GONE
+        isLoading = false
     }
 }

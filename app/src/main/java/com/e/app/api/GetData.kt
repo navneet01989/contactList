@@ -12,5 +12,5 @@ interface GetData {
     }
     @Headers("Content-Type: application/json")
     @GET("/api/users/")
-    fun getContacts(@Query("page") page: String) : Call<Model.ContactResponse>
+    fun getContacts(@Query("page") page: Int, @Query("per_page") per_page: Int) : Call<Model.ContactResponse>
 }
