@@ -1,16 +1,15 @@
 package com.e.app.adapters
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.e.app.R
-import com.e.app.contact_list.ContactListFragment
 import com.e.app.details.ContactDetailsFragment
 import com.e.app.models.Model
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_main.*
 
 import kotlinx.android.synthetic.main.contact_list_item.view.*
 
@@ -28,10 +27,15 @@ class ContactListAdapter(
                 .error(R.drawable.ic_user_icon)
                 .into(view.avatar)
             view.setOnClickListener {
+                val contactDetailsFragment = ContactDetailsFragment()
+                val bundle = Bundle()
+                bundle.putSerializable("user", users[position])
+                bundle.putInt("position", position)
+                contactDetailsFragment.arguments = bundle
                 contactListFragment
                     .fragmentManager
                     ?.beginTransaction()
-                    ?.replace(R.id.main_frame, ContactDetailsFragment(), "ContactDetailsFragment")
+                    ?.replace(R.id.main_frame, contactDetailsFragment, "ContactDetailsFragment")
                     ?.addToBackStack("ContactDetailsFragment")
                     ?.commit()
             }

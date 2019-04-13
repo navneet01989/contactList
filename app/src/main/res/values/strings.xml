@@ -3,4 +3,6 @@
     <string name="contact">Contact</string>
     <string name="no_data_found_tap_to_reload">No data found, please tap to reload the data</string>
     <string name="back">Back</string>
+    <string name="mobile">ID</string>
+    <string name="edit">Edit</string>
 </resources>
