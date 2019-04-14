@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.e.app.R
+import com.e.app.edit_details.EditDetailsFragment
 import com.e.app.models.Model
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.contact_details_fragment.*
@@ -33,7 +34,17 @@ class ContactDetailsFragment: Fragment() {
             }
             false
         }
-
+        txtBack.setOnClickListener {
+            fragmentManager?.popBackStack()
+        }
+        txtEdit.setOnClickListener {
+            val editDetailsFragment = EditDetailsFragment()
+            fragmentManager
+                ?.beginTransaction()
+                ?.replace(R.id.main_frame, editDetailsFragment, "editDetailsFragment")
+                ?.addToBackStack("editDetailsFragment")
+                ?.commit()
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =

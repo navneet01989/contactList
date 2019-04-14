@@ -5,4 +5,6 @@
     <string name="back">Back</string>
     <string name="mobile">ID</string>
     <string name="edit">Edit</string>
+    <string name="frstName">First Name</string>
+    <string name="lstName">Last Name</string>
 </resources>
