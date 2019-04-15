@@ -11,6 +11,7 @@ import com.e.app.edit_details.EditDetailsFragment
 import com.e.app.models.Model
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.contact_details_fragment.*
+import kotlinx.android.synthetic.main.contact_details_fragment.view.*
 import kotlinx.android.synthetic.main.contact_list_item.view.*
 
 class ContactDetailsFragment: Fragment() {
@@ -18,13 +19,13 @@ class ContactDetailsFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val user = arguments?.getSerializable("user") as Model.User
-        txtName.text = String.format("%s %s", user.first_name, user.last_name)
-        txtMobile.text = user.id.toString()
+        view.txtName.text = String.format("%s %s", user.first_name, user.last_name)
+        view.txtMobile.text = user.id.toString()
         Picasso.get()
             .load(user.avatar)
             .placeholder(R.drawable.ic_user_icon)
             .error(R.drawable.ic_user_icon)
-            .into(view.avatar)
+            .into(view.avatar_detail)
         view.isFocusableInTouchMode = true
         view.requestFocus()
         view.setOnKeyListener { _, keyCode, _ ->
@@ -34,11 +35,14 @@ class ContactDetailsFragment: Fragment() {
             }
             false
         }
-        txtBack.setOnClickListener {
+        view.txtBack.setOnClickListener {
             fragmentManager?.popBackStack()
         }
-        txtEdit.setOnClickListener {
+        view.txtEdit.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putSerializable("user", user)
             val editDetailsFragment = EditDetailsFragment()
+            editDetailsFragment.arguments = bundle
             fragmentManager
                 ?.beginTransaction()
                 ?.replace(R.id.main_frame, editDetailsFragment, "editDetailsFragment")

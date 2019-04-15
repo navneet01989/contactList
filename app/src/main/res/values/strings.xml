@@ -7,4 +7,5 @@
     <string name="edit">Edit</string>
     <string name="frstName">First Name</string>
     <string name="lstName">Last Name</string>
+    <string name="done">Done</string>
 </resources>

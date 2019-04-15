@@ -16,7 +16,7 @@ class MainFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
         childFragmentManager
             .beginTransaction()
-            .replace(main_frame.id, ContactListFragment(), "ContactListFragment")
+            .replace(R.id.main_frame, ContactListFragment(), "ContactListFragment")
             .addToBackStack("ContactListFragment")
             .commit()
     }
